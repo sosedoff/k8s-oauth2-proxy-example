@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1
+  labels:
+    app: app1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      selector: app1
+  template:
+    metadata:
+      labels:
+        app: app1
+        selector: app1
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      automountServiceAccountToken: false
+      containers:
+        - name: nginx
+          image: nginx:1.23
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 0.1m
+            limits:
+              cpu: 0.25m
+              memory: 128Mi

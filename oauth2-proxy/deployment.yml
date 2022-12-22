@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+  labels:
+    app: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      selector: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+        selector: oauth2-proxy
+    spec:
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      automountServiceAccountToken: false
+      containers:
+        - name: oauth2-proxy
+          image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
+          imagePullPolicy: Always
+          args:
+            - --skip-provider-button=true
+            - --provider=google
+            - --authenticated-emails-file=/etc/oauth2-proxy-configs/allowed.txt
+            - --cookie-domain=.supercorp.com
+            - --whitelist-domain=*.supercorp.com
+            - --cookie-expire=4h0m0s
+            - --upstream=file:///dev/null
+            - --http-address=0.0.0.0:4180
+            - --request-logging=false
+          envFrom:
+            - secretRef:
+                name: oauth2-proxy
+          volumeMounts:
+            - name: oauth2
+              mountPath: /etc/oauth2-proxy-configs
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 0.1m
+            limits:
+              cpu: 0.25m
+              memory: 128Mi
+      volumes:
+        - name: oauth2
+          configMap:
+            name: oauth2-proxy

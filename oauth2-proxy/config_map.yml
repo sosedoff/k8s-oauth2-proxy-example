@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oauth2-proxy
+data:
+  allowed.txt: |
+    user1@supercorp.com
+    user2@supercorp.com

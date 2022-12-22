@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app2-cert
+spec:
+  secretName: app2-ingress-tls
+  dnsNames:
+    - app2.supercorp.com
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+    group: cert-manager.io

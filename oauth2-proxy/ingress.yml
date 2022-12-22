@@ -1,0 +1,26 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth-proxy
+  annotations:
+    # Automatically manage DNS for services with `external-dns` controller, if available.
+    external-dns.alpha.kubernetes.io/hostname: auth.supercorp.com
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  rules:
+    - host: "auth.supercorp.com"
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: oauth2-proxy
+                port:
+                  number: 4180
+  tls:
+    - secretName: oauth-proxy2-ingress-tls
+      hosts:
+        - "auth.supercorp.com"

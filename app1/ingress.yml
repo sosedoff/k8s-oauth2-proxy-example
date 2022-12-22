@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app1
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: app1.supercorp.com
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/auth-url: "https://auth.supercorp.com/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://auth.supercorp.com/oauth2/start?rd=/redirect/$http_host$request_uri"
+spec:
+  rules:
+    - host: "app1.supercorp.com"
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: app1
+                port:
+                  number: 80
+  tls:
+    - secretName: app1-ingress-tls
+      hosts:
+        - "app1.supercorp.com"
